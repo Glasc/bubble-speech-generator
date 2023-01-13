@@ -65,7 +65,7 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="bg-gradient-to-r from-base-100 via-accent/10 to-base-100 relative flex min-h-screen items-center justify-center    py-4 px-4 md:px-0">
-        <div className="rouded-md bg-base-100/90 p-10">
+        <div className="rouded-md bg-base-300/90 p-10">
           <h1 className="mb-5 text-center text-xl font-bold text-accent md:text-2xl">
             Speech Bubble Generator
           </h1>
