@@ -7,6 +7,7 @@ import { z } from "zod";
 
 const Home: NextPage = () => {
   const [errorNotification, setErrorNotification] = useState<boolean>(false);
+  const [isEmpty, setIsEmpty] = useState<boolean>(true);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -52,7 +53,9 @@ const Home: NextPage = () => {
           ctx.drawImage(image2, 0, 70, 300, 330);
         };
       };
+      setIsEmpty(false);
     } catch (err) {
+      setIsEmpty(true);
       setErrorNotification(true);
       setTimeout(() => {
         setErrorNotification(false);
@@ -85,17 +88,19 @@ const Home: NextPage = () => {
           <>
             <canvas
               className="mt-5 w-full overflow-hidden"
-              width={300}
-              height={400}
+              width={isEmpty ? 0 : 300}
+              height={isEmpty ? 0 : 400}
               id="capture"
               ref={canvasRef}
             ></canvas>
-            <button
-              className="btn-accent btn mt-6 w-full"
-              onClick={handleDownload}
-            >
-              Download
-            </button>
+            {!isEmpty ? (
+              <button
+                className="btn-accent btn mt-6 w-full"
+                onClick={handleDownload}
+              >
+                Download
+              </button>
+            ) : null}
 
             {errorNotification ? <ErrorNotification /> : null}
           </>
