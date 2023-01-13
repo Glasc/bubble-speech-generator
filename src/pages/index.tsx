@@ -72,7 +72,7 @@ const Home: NextPage = () => {
               >
                 <Image
                   width={400}
-                  height={100}
+                  height={800}
                   alt="speech bubble"
                   src="/speech-bubble.png"
                   className="h-16 w-full"
