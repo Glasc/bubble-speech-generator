@@ -16,10 +16,10 @@ const Home: NextPage = () => {
       if (!e.target.files || !e.target.files[0]) return;
 
       const file = e?.target?.files[0];
-      const allowedTypes = ["type/png", "type/jpeg", "type/jpg"];
-
-      if (!allowedTypes.some((type) => type === file.type)) {
-        throw new Error("Invalid file type");
+      const allowedTypes = ["image/png", "image/jpeg", "image/jpg"];
+      console.log(file.type)
+      if (!allowedTypes.includes(file.type)) {
+        throw new Error("Solo se permiten los formatos: jpeg, png y jpg.")
       }
 
       const reader = new FileReader();
@@ -105,7 +105,7 @@ export default Home;
 
 const ErrorNotification = () => {
   return (
-    <div className="alert alert-error fixed bottom-0 right-0 mx-auto mb-8 mr-8 shadow-lg w-auto">
+    <div className="alert alert-error fixed bottom-0 right-0 mx-auto mb-8 mr-8 w-auto shadow-lg">
       <div>
         <svg
           xmlns="http://www.w3.org/2000/svg"
