@@ -66,7 +66,7 @@ const Home: NextPage = () => {
           {src ? (
             <>
               <div
-                className="mt-5 w-full max-w-xs overflow-hidden rounded-md"
+                className="mt-5 w-full max-w-xs overflow-hidden"
                 id="capture"
                 ref={captureRef}
               >
