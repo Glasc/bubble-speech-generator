@@ -108,7 +108,7 @@ const Home: NextPage = () => {
                 className="btn-accent btn mt-6 w-full"
                 onClick={handleDownload}
               >
-                Download
+                Descargar
               </button>
             ) : null}
 
