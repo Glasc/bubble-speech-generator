@@ -1,18 +1,21 @@
-import html2canvas from "html2canvas";
 import { type NextPage } from "next";
 import Head from "next/head";
-import NextImage from "next/image";
 import React, { useRef, useState } from "react";
 import { z } from "zod";
 
 const Home: NextPage = () => {
-  const [errorNotification, setErrorNotification] = useState<boolean>(false);
+  const [errorNotification, setErrorNotification] = useState("");
+  const [warningNotification, setWarningNotification] = useState("");
   const [isEmpty, setIsEmpty] = useState<boolean>(true);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     try {
-      const file = z.instanceof(File).parse(e.target.files?.[0]);
+      const file = z.instanceof(File).safeParse(e.target.files?.[0]);
+
+      if (!file.success) {
+        throw "No se ha seleccionado ningún archivo.";
+      }
 
       const allowedTypes = [
         "image/png",
@@ -22,14 +25,14 @@ const Home: NextPage = () => {
         "image/jfif",
       ];
 
-      if (!allowedTypes.includes(file.type)) {
+      if (!allowedTypes.includes(file.data.type)) {
         throw new Error(
           "Solo se permiten los formatos: jpeg, png, jpg, webp y jfif."
         );
       }
 
       const reader = new FileReader();
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(file.data);
 
       reader.onload = ({ target }) => {
         const result = z.string().parse(target?.result);
@@ -55,10 +58,17 @@ const Home: NextPage = () => {
       };
       setIsEmpty(false);
     } catch (err) {
+      if (err === "No se ha seleccionado ningún archivo.") {
+        setErrorNotification("")
+        setWarningNotification(err);
+      } else {
+        setWarningNotification("")
+        setErrorNotification("Solo se permiten los formatos: jpeg, png y jpg.");
+      }
       setIsEmpty(true);
-      setErrorNotification(true);
       setTimeout(() => {
-        setErrorNotification(false);
+        setErrorNotification("");
+        setWarningNotification("");
       }, 6000);
     }
   };
@@ -102,7 +112,16 @@ const Home: NextPage = () => {
               </button>
             ) : null}
 
-            {errorNotification ? <ErrorNotification /> : null}
+            {errorNotification ? (
+              <Notification variant="error" errorMessage={errorNotification} />
+            ) : null}
+
+            {warningNotification ? (
+              <Notification
+                variant="warning"
+                errorMessage={warningNotification}
+              />
+            ) : null}
           </>
         </div>
       </main>
@@ -112,9 +131,43 @@ const Home: NextPage = () => {
 
 export default Home;
 
-const ErrorNotification = () => {
+const Notification = ({
+  errorMessage,
+  variant,
+}: {
+  errorMessage: string;
+  variant: "error" | "warning";
+}) => {
+  if (variant === "warning") {
+    return (
+      <div
+        className={`alert alert-warning fixed bottom-0 right-0 mx-auto mb-8 mr-8 w-auto shadow-lg`}
+      >
+        <div>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6 flex-shrink-0 stroke-current"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+            />
+          </svg>
+
+          <span>{errorMessage}</span>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="alert alert-error fixed bottom-0 right-0 mx-auto mb-8 mr-8 w-auto shadow-lg">
+    <div
+      className={`alert alert-error fixed bottom-0 right-0 mx-auto mb-8 mr-8 w-auto shadow-lg`}
+    >
       <div>
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -129,7 +182,7 @@ const ErrorNotification = () => {
             d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
           />
         </svg>
-        <span>Solo se permiten los formatos: jpeg, png y jpg.</span>
+        <span>{errorMessage}</span>
       </div>
     </div>
   );
