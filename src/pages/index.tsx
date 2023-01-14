@@ -45,24 +45,32 @@ const Home: NextPage = () => {
         ctx.clearRect(0, 0, 300, 400);
 
         const image1 = new Image();
+        const image2 = new Image();
+
         image1.src = "/speech-bubble.png";
+        image2.src = result;
+
         image1.onload = () => {
-          ctx.drawImage(image1, 0, 0, 300, 70);
+          ctx.drawImage(image1, 0, 0, 300, 50);
         };
 
-        const image2 = new Image();
-        image2.src = result;
         image2.onload = () => {
-          ctx.drawImage(image2, 0, 70, 300, 330);
+          const width = image2.naturalWidth;
+          const height = image2.naturalHeight;
+          const aspectRatio = width / height;
+          if (!canvasRef?.current) return
+          canvasRef.current.height =  (300 / aspectRatio) + 50;
+          canvasRef.current.width =  300;
+          ctx.drawImage(image2, 0, 50, 300, 300 / aspectRatio);
         };
       };
       setIsEmpty(false);
     } catch (err) {
       if (err === "No se ha seleccionado ningún archivo.") {
-        setErrorNotification("")
+        setErrorNotification("");
         setWarningNotification(err);
       } else {
-        setWarningNotification("")
+        setWarningNotification("");
         setErrorNotification("Solo se permiten los formatos: jpeg, png y jpg.");
       }
       setIsEmpty(true);
