@@ -36,11 +36,10 @@ const Home: NextPage = () => {
 
       reader.onload = ({ target }) => {
         const result = z.string().parse(target?.result);
-
-        if (!canvasRef?.current) return;
-
-        const ctx = canvasRef?.current.getContext("2d");
-        if (!ctx) return;
+        const canvas = z.instanceof(HTMLCanvasElement).parse(canvasRef.current);
+        const ctx = z
+          .instanceof(CanvasRenderingContext2D)
+          .parse(canvas.getContext("2d"));
 
         const image1 = new Image();
         const image2 = new Image();
@@ -48,20 +47,22 @@ const Home: NextPage = () => {
         image1.src = "/speech-bubble.png";
         image2.src = result;
 
-        image1.onload = () => {
-          ctx.drawImage(image1, 0, 0, 300, 50);
-        };
-
         image2.onload = () => {
-          const width = image2.naturalWidth;
-          const height = image2.naturalHeight;
-          const aspectRatio = width / height;
-          if (!canvasRef?.current) return;
-          canvasRef.current.height = 300 / aspectRatio + 50;
-          canvasRef.current.width = 300;
-          ctx.drawImage(image2, 0, 50, 300, 300 / aspectRatio);
+          image1.onload = () => {
+            const width = image2.naturalWidth;
+            const height = image2.naturalHeight;
+            const aspectRatio = width / height;
+            canvas.height = 300 / aspectRatio + 50;
+            canvas.width = 300;
+
+            ctx.clearRect(0, 0, canvas?.width, canvas.height);
+
+            ctx.drawImage(image1, 0, 0, 300, 50);
+            ctx.drawImage(image2, 0, 50, 300, 300 / aspectRatio);
+          };
         };
       };
+
       setIsEmpty(false);
     } catch (err) {
       if (err === "No se ha seleccionado ningún archivo.") {
@@ -81,10 +82,16 @@ const Home: NextPage = () => {
 
   const handleDownload = (e: React.MouseEvent) => {
     e.preventDefault();
-    if (!canvasRef?.current) return;
+    const { current: canvas } = canvasRef;
+
+    if (!canvas) return;
     const link = document.createElement("a");
-    link.download = crypto.randomUUID();
-    link.href = canvasRef.current.toDataURL();
+    link.href = canvas.toDataURL("image/jpeg", 0.92);
+    link.download = z
+      .string()
+      .min(8)
+      .parse(crypto.randomUUID().split("").slice(0, 8).join("") + ".jpg");
+
     link.click();
   };
 
@@ -104,8 +111,8 @@ const Home: NextPage = () => {
           <>
             <canvas
               className="mt-5 w-full overflow-hidden"
-              width={isEmpty ? 0 : 300}
-              height={isEmpty ? 0 : 400}
+              width={0}
+              height={0}
               id="capture"
               ref={canvasRef}
             ></canvas>
