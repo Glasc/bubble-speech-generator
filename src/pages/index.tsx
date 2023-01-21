@@ -42,8 +42,6 @@ const Home: NextPage = () => {
         const ctx = canvasRef?.current.getContext("2d");
         if (!ctx) return;
 
-        ctx.clearRect(0, 0, 300, 400);
-
         const image1 = new Image();
         const image2 = new Image();
 
@@ -58,9 +56,9 @@ const Home: NextPage = () => {
           const width = image2.naturalWidth;
           const height = image2.naturalHeight;
           const aspectRatio = width / height;
-          if (!canvasRef?.current) return
-          canvasRef.current.height =  (300 / aspectRatio) + 50;
-          canvasRef.current.width =  300;
+          if (!canvasRef?.current) return;
+          canvasRef.current.height = 300 / aspectRatio + 50;
+          canvasRef.current.width = 300;
           ctx.drawImage(image2, 0, 50, 300, 300 / aspectRatio);
         };
       };
