@@ -26,7 +26,7 @@ const Home: NextPage = () => {
       }
       const reader = new FileReader();
       reader.readAsDataURL(file);
-      reader.onload = ({ target }) => {
+      reader.onload = async ({ target }) => {
         const result = z.string().parse(target?.result);
         const canvas = z.instanceof(HTMLCanvasElement).parse(canvasRef.current);
         const ctx = z
@@ -34,20 +34,28 @@ const Home: NextPage = () => {
           .parse(canvas.getContext("2d"));
         const image1 = new Image();
         const image2 = new Image();
+
+        const image1Promise = new Promise((resolve) => {
+          image1.onload = resolve;
+        });
+        const image2Promise = new Promise((resolve) => {
+          image2.onload = resolve;
+        });
+
         image1.src = "/speech-bubble.png";
         image2.src = result;
-        image2.onload = () => {
-          image1.onload = () => {
-            const width = image2.naturalWidth;
-            const height = image2.naturalHeight;
-            const aspectRatio = width / height;
-            canvas.height = 300 / aspectRatio + 50;
-            canvas.width = 300;
-            ctx.clearRect(0, 0, canvas?.width, canvas.height);
-            ctx.drawImage(image1, 0, 0, 300, 50);
-            ctx.drawImage(image2, 0, 50, 300, 300 / aspectRatio);
-          };
-        };
+
+        await Promise.all([image1Promise, image2Promise]).then(() => {
+          const width = image2.naturalWidth;
+          const height = image2.naturalHeight;
+          const aspectRatio = width / height;
+          if (!canvasRef?.current) return;
+          canvasRef.current.height = 300 / aspectRatio + 50;
+          canvasRef.current.width = 300;
+
+          ctx.drawImage(image1, 0, 0, 300, 50);
+          ctx.drawImage(image2, 0, 50, 300, 300 / aspectRatio);
+        });
       };
       setIsEmpty(false);
     } catch (err) {
