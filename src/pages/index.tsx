@@ -1,6 +1,6 @@
 import { type NextPage } from "next";
 import Head from "next/head";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { z } from "zod";
 
 const Home: NextPage = () => {
@@ -8,15 +8,10 @@ const Home: NextPage = () => {
   const [warningNotification, setWarningNotification] = useState("");
   const [isEmpty, setIsEmpty] = useState<boolean>(true);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const mainRef = useRef<HTMLDivElement>(null);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleUpload = (file: File) => {
     try {
-      const file = z.instanceof(File).safeParse(e.target.files?.[0]);
-
-      if (!file.success) {
-        throw "No se ha seleccionado ningún archivo.";
-      }
-
       const allowedTypes = [
         "image/png",
         "image/jpeg",
@@ -24,29 +19,23 @@ const Home: NextPage = () => {
         "image/webp",
         "image/jfif",
       ];
-
-      if (!allowedTypes.includes(file.data.type)) {
+      if (!allowedTypes.includes(file.type)) {
         throw new Error(
           "Solo se permiten los formatos: jpeg, png, jpg, webp y jfif."
         );
       }
-
       const reader = new FileReader();
-      reader.readAsDataURL(file.data);
-
+      reader.readAsDataURL(file);
       reader.onload = ({ target }) => {
         const result = z.string().parse(target?.result);
         const canvas = z.instanceof(HTMLCanvasElement).parse(canvasRef.current);
         const ctx = z
           .instanceof(CanvasRenderingContext2D)
           .parse(canvas.getContext("2d"));
-
         const image1 = new Image();
         const image2 = new Image();
-
         image1.src = "/speech-bubble.png";
         image2.src = result;
-
         image2.onload = () => {
           image1.onload = () => {
             const width = image2.naturalWidth;
@@ -54,15 +43,12 @@ const Home: NextPage = () => {
             const aspectRatio = width / height;
             canvas.height = 300 / aspectRatio + 50;
             canvas.width = 300;
-
             ctx.clearRect(0, 0, canvas?.width, canvas.height);
-
             ctx.drawImage(image1, 0, 0, 300, 50);
             ctx.drawImage(image2, 0, 50, 300, 300 / aspectRatio);
           };
         };
       };
-
       setIsEmpty(false);
     } catch (err) {
       if (err === "No se ha seleccionado ningún archivo.") {
@@ -79,6 +65,29 @@ const Home: NextPage = () => {
       }, 6000);
     }
   };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = z.instanceof(File).safeParse(e.target.files?.[0]);
+    if (!file.success) return;
+
+    handleUpload(file.data);
+  };
+
+  useEffect(() => {
+    z.instanceof(HTMLDivElement)
+      .parse(mainRef?.current)
+      .addEventListener("dragover", (e) => e.preventDefault());
+
+    z.instanceof(HTMLDivElement)
+      .parse(mainRef?.current)
+      .addEventListener("drop", (e) => {
+        e.preventDefault();
+        const file = z.instanceof(File).safeParse(e.dataTransfer?.files[0]);
+        if (!file.success) return;
+
+        handleUpload(file.data);
+      });
+  }, []);
 
   const handleDownload = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -103,7 +112,7 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="relative flex min-h-screen items-center justify-center bg-gradient-to-r from-base-100 via-accent/5 to-base-100 py-4 px-4 md:px-0">
-        <div className="rouded-md bg-base-300/90 p-10">
+        <div ref={mainRef} className="rouded-md bg-base-300/90 p-10">
           <h1 className="mb-5 text-center text-xl font-bold text-accent md:text-2xl">
             Speech Bubble Generator
           </h1>
