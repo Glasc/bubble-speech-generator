@@ -6,6 +6,7 @@ module.exports = {
   },
   plugins: [require("daisyui")],
   daisyui: {
+    logs: false,
     themes: [{
       "catppuccin-mocha": {
         primary: "#89b4fa", // blue
