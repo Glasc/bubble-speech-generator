@@ -1,11 +1,12 @@
 import Head from "next/head";
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 
 type LayoutProps = {
   children: ReactNode;
+  Alerts: JSX.Element | null;
 };
 
-export const Layout = ({ children }: LayoutProps) => {
+export const Layout = ({ children, Alerts = null }: LayoutProps) => {
   return (
     <>
       <Head>
@@ -14,6 +15,7 @@ export const Layout = ({ children }: LayoutProps) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       {children}
+      {Alerts}
     </>
   );
 };
