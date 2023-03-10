@@ -113,7 +113,9 @@ const App = () => {
               src="/showcase-before.png"
               alt="image before"
             />
-            <span className="block text-center text-2xl font-bold">↓</span>
+            <span className="block text-center text-4xl text-accent font-bold">
+              ↓
+            </span>
             <img
               className="w-36 sm:w-56"
               src="/showcase-after.jpg"
