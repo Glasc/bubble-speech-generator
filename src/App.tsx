@@ -1,76 +1,68 @@
-import { type NextPage } from "next";
-import { useEffect, useRef } from "react";
-import { z } from "zod";
-import { ErrorAlert, WarningAlert } from "../Alert";
-import { Layout } from "../Layout";
-import { Panel } from "../Panel";
-import { useFile } from "../useFile";
+import { useEffect, useRef } from "react"
+import { z } from "zod"
+import { ErrorAlert, WarningAlert } from "./components/Alert"
+import { Layout } from "./components/Layout"
+import { Panel } from "./components/Panel"
+import { useFile } from "./hooks/useFile"
 
-const Home: NextPage = () => {
-  const mainRef = useRef<HTMLElement>(null);
-  const panelRef = useRef<HTMLDivElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+const App = () => {
+  const mainRef = useRef<HTMLElement>(null)
+  const panelRef = useRef<HTMLDivElement>(null)
+  const canvasRef = useRef<HTMLCanvasElement>(null)
 
-  const {
-    errorNotification,
-    warningNotification,
-    isFileSubmitted,
-    handleDownload,
-    handleFileChange,
-    handleUpload,
-  } = useFile(canvasRef);
+  const fileHandler = useFile(canvasRef)
 
   useEffect(() => {
-    const main = mainRef?.current;
-    const panel = panelRef?.current;
-    if (!main || !panel) return;
+    const main = mainRef?.current
+    const panel = panelRef?.current
+    if (!main || !panel) return
 
     const changeBackground = (background: string) => {
-      main.style.backgroundColor = background;
-    };
+      main.style.backgroundColor = background
+    }
 
     main.addEventListener("dragover", (e) => {
-      e.preventDefault();
-      changeBackground("#291d2b");
-    });
+      e.preventDefault()
+      changeBackground("#291d2b")
+    })
 
     main.addEventListener("drop", (e) => {
-      e.preventDefault();
-      const file = z.instanceof(File).safeParse(e.dataTransfer?.files[0]);
-      if (!file.success) return;
-      changeBackground("");
-      handleUpload(file.data);
-    });
+      e.preventDefault()
+      const file = z.instanceof(File).safeParse(e.dataTransfer?.files[0])
+      if (!file.success) return
+      changeBackground("")
+      fileHandler.handleUpload(file.data)
+    })
 
     main.addEventListener("dragleave", () => {
-      changeBackground("");
-    });
+      changeBackground("")
+    })
 
     panel.addEventListener("dragleave", () => {
-      changeBackground("");
-    });
+      changeBackground("")
+    })
 
     panel.addEventListener("drop", (e) => {
-      e.preventDefault();
-      const file = z.instanceof(File).safeParse(e.dataTransfer?.files[0]);
-      if (!file.success) return;
+      e.preventDefault()
+      const file = z.instanceof(File).safeParse(e.dataTransfer?.files[0])
+      if (!file.success) return
 
-      main.style.backgroundColor = "";
-      panel.style.backgroundColor = "";
+      main.style.backgroundColor = ""
+      panel.style.backgroundColor = ""
 
-      handleUpload(file.data);
-    });
-  }, [handleUpload]);
+      fileHandler.handleUpload(file.data)
+    })
+  }, [fileHandler.handleUpload])
 
   return (
     <Layout
       Alerts={
         <>
-          <WarningAlert isVisible={Boolean(warningNotification)}>
-            {warningNotification}
+          <WarningAlert isVisible={Boolean(fileHandler.warningNotification)}>
+            {fileHandler.warningNotification}
           </WarningAlert>
-          <ErrorAlert isVisible={Boolean(errorNotification)}>
-            {errorNotification}
+          <ErrorAlert isVisible={Boolean(fileHandler.errorNotification)}>
+            {fileHandler.errorNotification}
           </ErrorAlert>
         </>
       }
@@ -82,7 +74,7 @@ const Home: NextPage = () => {
         <div className="md:flex md:space-x-10">
           <Panel
             panelRef={panelRef}
-            isFileSubmitted={isFileSubmitted}
+            isFileSubmitted={fileHandler.isFileSubmitted}
             title={
               <h1 className="mb-5 text-center text-xl font-bold text-primary md:text-3xl ">
                 Speech Bubble Generator
@@ -92,14 +84,14 @@ const Home: NextPage = () => {
               <input
                 className="file-input-bordered file-input file-input-sm mt-2 w-full"
                 type="file"
-                onChange={handleFileChange}
+                onChange={fileHandler.handleFileChange}
               />
             }
             canvas={
               <canvas
                 ref={canvasRef}
                 className={`${
-                  isFileSubmitted ? "mt-5" : "m-0"
+                  fileHandler.isFileSubmitted ? "mt-5" : "m-0"
                 } w-full overflow-hidden`}
                 width={0}
                 height={0}
@@ -109,7 +101,7 @@ const Home: NextPage = () => {
             downloadButton={
               <button
                 className="btn-primary btn mt-6 w-full "
-                onClick={handleDownload}
+                onClick={fileHandler.handleDownload}
               >
                 Download
               </button>
@@ -131,7 +123,7 @@ const Home: NextPage = () => {
         </div>
       </main>
     </Layout>
-  );
-};
+  )
+}
 
-export default Home;
+export default App
