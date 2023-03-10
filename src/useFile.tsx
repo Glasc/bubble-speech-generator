@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { z } from "zod";
 
 type useFileProps = React.RefObject<HTMLCanvasElement> | null;
@@ -17,11 +17,13 @@ export const useFile = (canvasRef: useFileProps) => {
         "image/webp",
         "image/jfif",
       ];
+
       if (!allowedTypes.includes(file.type)) {
         throw new Error(
           "Only these formats are allowed: jpeg, png, jpg, webp y jfif."
         );
       }
+      
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = async ({ target }) => {

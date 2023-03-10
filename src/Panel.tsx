@@ -20,7 +20,7 @@ export const Panel = ({
   return (
     <div
       ref={panelRef}
-      className="w-full max-w-sm overflow-hidden rounded-md border-2 border-gray-700/40 bg-base-100 p-6 shadow"
+      className="w-full h-full max-w-sm overflow-hidden rounded-md border-2 border-gray-700/40 bg-base-100 p-6 shadow"
     >
       {title}
       {input}

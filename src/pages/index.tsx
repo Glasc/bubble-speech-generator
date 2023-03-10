@@ -79,41 +79,56 @@ const Home: NextPage = () => {
         ref={mainRef}
         className="relative flex min-h-screen items-center justify-center bg-base-300 py-4 px-4 md:px-0"
       >
-        <Panel
-          panelRef={panelRef}
-          isFileSubmitted={isFileSubmitted}
-          title={
-            <h1 className="mb-5 text-center text-xl font-bold text-primary md:text-3xl ">
-              Speech Bubble Generator
-            </h1>
-          }
-          input={
-            <input
-              className="file-input-bordered file-input file-input-sm mt-2 w-full"
-              type="file"
-              onChange={handleFileChange}
+        <div className="md:flex md:space-x-10">
+          <Panel
+            panelRef={panelRef}
+            isFileSubmitted={isFileSubmitted}
+            title={
+              <h1 className="mb-5 text-center text-xl font-bold text-primary md:text-3xl ">
+                Speech Bubble Generator
+              </h1>
+            }
+            input={
+              <input
+                className="file-input-bordered file-input file-input-sm mt-2 w-full"
+                type="file"
+                onChange={handleFileChange}
+              />
+            }
+            canvas={
+              <canvas
+                ref={canvasRef}
+                className={`${
+                  isFileSubmitted ? "mt-5" : "m-0"
+                } w-full overflow-hidden`}
+                width={0}
+                height={0}
+                id="capture"
+              ></canvas>
+            }
+            downloadButton={
+              <button
+                className="btn-primary btn mt-6 w-full "
+                onClick={handleDownload}
+              >
+                Download
+              </button>
+            }
+          />
+          <article className="hidden md:block space-y-1">
+            <img
+              className="w-36 sm:w-56"
+              src="/showcase-before.png"
+              alt="image before"
             />
-          }
-          canvas={
-            <canvas
-              ref={canvasRef}
-              className={`${
-                isFileSubmitted ? "mt-5" : "m-0"
-              } w-full overflow-hidden`}
-              width={0}
-              height={0}
-              id="capture"
-            ></canvas>
-          }
-          downloadButton={
-            <button
-              className="btn-primary btn mt-6 w-full "
-              onClick={handleDownload}
-            >
-              Download
-            </button>
-          }
-        />
+            <span className="block text-center text-2xl font-bold">↓</span>
+            <img
+              className="w-36 sm:w-56"
+              src="/showcase-after.jpg"
+              alt="image after"
+            />
+          </article>
+        </div>
       </main>
     </Layout>
   );
