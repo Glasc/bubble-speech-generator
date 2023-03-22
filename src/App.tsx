@@ -107,17 +107,17 @@ const App = () => {
               </button>
             }
           />
-          <article className="hidden md:block space-y-1">
+          <article className="hidden md:block space-y-1 pointer-events-none select-none">
             <img
-              className="w-36 sm:w-56 pointer-events-none"
+              className="w-36 sm:w-56 pointer-events-none select-none"
               src="/showcase-before.png"
               alt="image before"
             />
-            <span className="block text-center text-4xl text-accent font-bold">
+            <span className="block text-center text-4xl text-accent font-bold select-none">
               ↓
             </span>
             <img
-              className="w-36 sm:w-56 pointer-events-none"
+              className="w-36 sm:w-56 pointer-events-none select-none"
               src="/showcase-after.jpg"
               alt="image after"
             />
