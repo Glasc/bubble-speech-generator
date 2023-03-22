@@ -109,7 +109,7 @@ const App = () => {
           />
           <article className="hidden md:block space-y-1">
             <img
-              className="w-36 sm:w-56"
+              className="w-36 sm:w-56 pointer-events-none"
               src="/showcase-before.png"
               alt="image before"
             />
@@ -117,7 +117,7 @@ const App = () => {
               ↓
             </span>
             <img
-              className="w-36 sm:w-56"
+              className="w-36 sm:w-56 pointer-events-none"
               src="/showcase-after.jpg"
               alt="image after"
             />
