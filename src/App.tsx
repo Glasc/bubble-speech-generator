@@ -117,15 +117,15 @@ const App = () => {
           />
           <article className="hidden md:block space-y-1 pointer-events-none select-none">
             <img
-              className="w-36 sm:w-56 pointer-events-none select-none"
-              src="/showcase-before.png"
+              className="w-full h-56 aspect-square pointer-events-none select-none"
+              src="/showcase-before.jpg"
               alt="image before"
             />
             <span className="block text-center text-4xl text-accent font-bold select-none">
               ↓
             </span>
             <img
-              className="w-36 sm:w-56 pointer-events-none select-none"
+              className="w-full h-64 aspect-square object-cover pointer-events-none select-none"
               src="/showcase-after.jpg"
               alt="image after"
             />
