@@ -52,6 +52,14 @@ const App = () => {
 
       fileHandler.handleUpload(file.data)
     })
+
+    return () => {
+      main.removeEventListener("dragover", () => {})
+      main.removeEventListener("drop", () => {})
+      main.removeEventListener("dragleave", () => {})
+      panel.removeEventListener("dragleave", () => {})
+      panel.removeEventListener("drop", () => {})
+    }
   }, [fileHandler.handleUpload])
 
   return (
